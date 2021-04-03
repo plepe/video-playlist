@@ -1,7 +1,9 @@
 /**
- * MediaItem
- * video: href of video file
- * audio: href of audio file
+ * @typedef {Object} MediaItem - an entry in the playlist
+ * @property {string} video href of video file
+ * @property {string} audio href of audio file
+ * @property {number} videoDuration duration of the video in seconds (will be set/updated of the real duration, when the metadata has been loaded)
+ * @property {number} audioDuration duration of the audio in seconds (will be set/updated of the real duration, when the metadata has been loaded)
  */
 
 /**
@@ -9,8 +11,8 @@
  */
 class PlaylistMedia {
   /**
-   * list list of media items
-   * options options
+   * @param {MediaItem[]} list list of media items
+   * @param {Object} options options
    */
   constructor (list, options) {
     this.list = list
