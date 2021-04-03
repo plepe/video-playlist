@@ -30,16 +30,20 @@ class PlaylistMedia {
       const entry = {
         index: null,
         video: document.createElement('video'),
-        audio: new Audio()
+        audio: new global.Audio()
       }
 
       entry.video.onended = () => this.next()
       entry.video.preload = 'auto'
       entry.video.controls = true
-      entry.video.onloadedmetadata = () => this.list[entry.index].videoDuration = entry.video.duration
+      entry.video.onloadedmetadata = () => {
+        this.list[entry.index].videoDuration = entry.video.duration
+      }
       entry.audio.onended = () => this.next()
       entry.audio.preload = 'auto'
-      entry.audio.onloadedmetadata = () => this.list[entry.index].audioDuration = entry.audio.duration
+      entry.audio.onloadedmetadata = () => {
+        this.list[entry.index].audioDuration = entry.audio.duration
+      }
 
       this.preloadList.push(entry)
     }
@@ -68,7 +72,7 @@ class PlaylistMedia {
    * play - start playing playlist
    */
   play () {
-    while(this.dom.firstChild) {
+    while (this.dom.firstChild) {
       this.dom.removeChild(this.dom.firstChild)
     }
 
@@ -100,4 +104,8 @@ class PlaylistMedia {
     this.preload()
     this.play()
   }
+}
+
+if (module) {
+  module.exports = PlaylistMedia
 }

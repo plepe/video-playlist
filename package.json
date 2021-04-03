@@ -5,6 +5,7 @@
   "main": "PlaylistMedia.js",
   "scripts": {
     "http-server": "http-server ./ -p 8000",
+    "lint": "standard --fix PlaylistMedia.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -18,6 +19,7 @@
   },
   "homepage": "https://github.com/plepe/PlaylistMedia#readme",
   "devDependencies": {
-    "http-server": "^0.12.3"
+    "http-server": "^0.12.3",
+    "standard": "^16.0.3"
   }
 }
