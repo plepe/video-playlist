@@ -23,18 +23,10 @@ class PlaylistMedia {
 
     this.preloadListInit()
     this.preload()
-
-    this.videos = [document.createElement('video')]
-    this.videos.forEach(video => {
-    })
-    this.audios = [new Audio()]
-    this.audios.forEach(video => {
-      video.onended = () => this.next()
-    })
   }
 
   preloadListInit () {
-    for (let i = 0; i < 1; i++) {
+    for (let i = 0; i < 3; i++) {
       const entry = {
         index: null,
         video: document.createElement('video'),
@@ -42,8 +34,12 @@ class PlaylistMedia {
       }
 
       entry.video.onended = () => this.next()
-      entry.audio.onended = () => this.next()
+      entry.video.preload = 'auto'
       entry.video.controls = true
+      entry.video.onloadedmetadata = () => this.list[entry.index].videoDuration = entry.video.duration
+      entry.audio.onended = () => this.next()
+      entry.audio.preload = 'auto'
+      entry.audio.onloadedmetadata = () => this.list[entry.index].audioDuration = entry.audio.duration
 
       this.preloadList.push(entry)
     }
