@@ -4,10 +4,13 @@
   "description": "Plays a list of media items",
   "main": "PlaylistMedia.js",
   "scripts": {
+    "build": "browserify index.js -o dist/app.js",
     "doc": "jsdoc -d doc/ PlaylistMedia.js",
     "http-server": "http-server ./ -p 8000",
     "lint": "standard --fix PlaylistMedia.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "npm run build",
+    "watch": "watchify -d index.js -o dist/app.js -v"
   },
   "repository": {
     "type": "git",
@@ -20,8 +23,10 @@
   },
   "homepage": "https://github.com/plepe/PlaylistMedia#readme",
   "devDependencies": {
+    "browserify": "^17.0.0",
     "http-server": "^0.12.3",
     "jsdoc": "^3.6.6",
-    "standard": "^16.0.3"
+    "standard": "^16.0.3",
+    "watchify": "^4.0.0"
   }
 }

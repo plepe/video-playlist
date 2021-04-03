@@ -1,3 +1,5 @@
+const EventEmitter = require('events')
+
 /**
  * @typedef {Object} MediaItem - an entry in the playlist
  * @property {string} video href of video file
@@ -16,12 +18,13 @@
 /**
  * PlaylistMedia - class that plays a list of media files consecutively
  */
-class PlaylistMedia {
+class PlaylistMedia extends EventEmitter {
   /**
    * @param {MediaItem[]} list list of media items
    * @param {Object} options options
    */
   constructor (list, options) {
+    super()
     this.list = list
     this.preloadIndex = 0
     this.options = options
@@ -155,6 +158,4 @@ class PlaylistMedia {
   }
 }
 
-if (typeof module !== 'undefined' && module) {
-  module.exports = PlaylistMedia
-}
+module.exports = PlaylistMedia
