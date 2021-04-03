@@ -32,7 +32,7 @@ class PlaylistMedia {
       const entry = {
         index: null,
         video: document.createElement('video'),
-        audio: new global.Audio()
+        audio: new window.Audio()
       }
 
       entry.video.onended = () => this.next()
@@ -108,6 +108,6 @@ class PlaylistMedia {
   }
 }
 
-if (module) {
+if (typeof module !== 'undefined' && module) {
   module.exports = PlaylistMedia
 }
