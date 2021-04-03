@@ -4,6 +4,7 @@
   "description": "Plays a list of media items",
   "main": "PlaylistMedia.js",
   "scripts": {
+    "http-server": "http-server ./ -p 8000",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -15,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/plepe/PlaylistMedia/issues"
   },
-  "homepage": "https://github.com/plepe/PlaylistMedia#readme"
+  "homepage": "https://github.com/plepe/PlaylistMedia#readme",
+  "devDependencies": {
+    "http-server": "^0.12.3"
+  }
 }

@@ -1,0 +1,22 @@
+<DOCTYPE html>
+<html>
+<head>
+  <script src='PlaylistMedia.js'></script>
+</head>
+<body>
+  <div id='media'></div>
+</body>
+<script>
+const playlist = new PlaylistMedia([
+  {
+    video: '1.mp4'
+  },
+  {
+    video: '2.mp4'
+  }
+],
+{
+  dom: document.getElementById('media')
+})
+</script>
+</html>
