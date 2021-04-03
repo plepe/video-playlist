@@ -4,6 +4,13 @@
  * @property {string} audio href of audio file
  * @property {number} videoDuration duration of the video in seconds (will be set/updated of the real duration, when the metadata has been loaded)
  * @property {number} audioDuration duration of the audio in seconds (will be set/updated of the real duration, when the metadata has been loaded)
+ * @property {Action[]} actions Actions which will be executed at certain positions in the video/audio
+ */
+
+/**
+ * @typedef {Object} Action - an action to be executed at a certain position in a video/audio
+ * @property {string|number} time timestamp when to execut the action in seconds or 'end'
+ * @property {number} [pause] pause the video for the specified amount of seconds
  */
 
 /**
@@ -93,6 +100,46 @@ class PlaylistMedia {
     }
     if (entry.audio) {
       this.current.audio.play()
+    }
+
+    this.current.actionIndex = 0
+    this.calcNextAction()
+  }
+
+  calcNextAction () {
+    const entry = this.list[this.index]
+
+    if (!entry.actions) {
+      return
+    }
+
+    const currentPosition = this.current.video.currentTime
+
+    // filter
+    const nextActions = entry.actions.filter((action, index) => action.time >= currentPosition && index >= this.current.actionIndex)
+    if (nextActions.length) {
+      const action = nextActions[0]
+      this.current.actionIndex = entry.actions.indexOf(action) + 1
+
+      if (action.time === currentPosition) {
+        this.executeAction(entry, action)
+      } else {
+        window.setTimeout(() => {
+          this.executeAction(entry, action)
+        }, (action.time - currentPosition) * 1000)
+      }
+    }
+  }
+
+  executeAction (entry, action) {
+    if (action.pause) {
+      this.current.video.pause()
+      window.setTimeout(() => {
+        this.current.video.play()
+        this.calcNextAction()
+      }, action.pause * 1000)
+    } else {
+      this.calcNextAction()
     }
   }
 
