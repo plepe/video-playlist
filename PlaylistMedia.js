@@ -13,6 +13,8 @@ const EventEmitter = require('events')
  * @typedef {Object} Action - an action to be executed at a certain position in a video/audio
  * @property {string|number} time timestamp when to execut the action in seconds or 'end'
  * @property {number} [pause] pause the video for the specified amount of seconds
+ * @property {DOMNode} [title] A DOMNode which will be shown over the video
+ * @property {number} [titleDuration] Duration for which this title is shown
  */
 
 /**
@@ -152,6 +154,13 @@ class PlaylistMedia extends EventEmitter {
 
   executeAction (entry, action) {
     this.emit('action', entry, action)
+
+    if (action.title) {
+      this.dom.appendChild(action.title)
+      if (action.titleDuration) {
+        window.setTimeout(() => this.dom.removeChild(action.title), action.titleDuration * 1000)
+      }
+    }
 
     if (action.pause) {
       this.current.video.pause()
