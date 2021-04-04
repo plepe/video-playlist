@@ -45,13 +45,15 @@ class PlaylistMedia extends EventEmitter {
         audio: new window.Audio()
       }
 
-      entry.video.onended = () => this.next()
+      entry.video.onended = () => this.end()
       entry.video.preload = 'auto'
       entry.video.controls = true
       entry.video.onloadedmetadata = () => {
         this.list[entry.index].videoDuration = entry.video.duration
       }
-      entry.audio.onended = () => this.next()
+      entry.video.onseeked = () => this.calcNextAction()
+      entry.video.onseeking = () => this.calcNextAction()
+      entry.audio.onended = () => this.end()
       entry.audio.preload = 'auto'
       entry.audio.onloadedmetadata = () => {
         this.list[entry.index].audioDuration = entry.audio.duration
@@ -131,6 +133,18 @@ class PlaylistMedia extends EventEmitter {
           this.executeAction(entry, action)
         }, (action.time - currentPosition) * 1000)
       }
+    }
+  }
+
+  end () {
+    const entry = this.list[this.index]
+
+    const nextActions = entry.actions.filter((action, index) => action.time == 'end')
+
+    if (nextActions.length) {
+      nextActions.forEach(action => this.executeAction(entry, action))
+    } else {
+      this.next()
     }
   }
 
