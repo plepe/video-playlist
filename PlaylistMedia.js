@@ -107,6 +107,8 @@ class PlaylistMedia extends EventEmitter {
       this.current.audio.play()
     }
 
+    this.emit('play', entry)
+
     this.current.actionIndex = 0
     this.calcNextAction()
   }
@@ -149,13 +151,22 @@ class PlaylistMedia extends EventEmitter {
   }
 
   executeAction (entry, action) {
+    this.emit('action', entry, action)
+
     if (action.pause) {
       this.current.video.pause()
-      window.setTimeout(() => {
-        this.current.video.play()
-        this.calcNextAction()
-      }, action.pause * 1000)
+
+      window.setTimeout(() => this.endAction(entry, action), action.pause * 1000)
     } else {
+      this.endAction(entry, action)
+    }
+  }
+
+  endAction (entry, action) {
+    if (action.time === 'end') {
+      this.next()
+    } else {
+      this.current.video.play()
       this.calcNextAction()
     }
   }
