@@ -5,7 +5,7 @@
   "main": "VideoPlaylist.js",
   "scripts": {
     "build": "browserify index.js -o dist/app.js",
-    "doc": "jsdoc -d doc/ VideoPlaylist.js",
+    "doc": "jsdoc2md VideoPlaylist.js > API.md",
     "http-server": "http-server ./ -p 8000",
     "lint": "standard --fix VideoPlaylist.js",
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -25,7 +25,7 @@
   "devDependencies": {
     "browserify": "^17.0.0",
     "http-server": "^0.12.3",
-    "jsdoc": "^3.6.6",
+    "jsdoc-to-markdown": "^7.0.1",
     "standard": "^16.0.3",
     "watchify": "^4.0.0"
   },
