@@ -1,23 +1,24 @@
 <DOCTYPE html>
 <html>
 <head>
+  <title>VideoPlaylist Demo</title>
   <script src='dist/app.js'></script>
   <style>
-#media {
+#video-playlist {
   width: 600px;
   height: 400px;
   position: relative;
 }
-#media video {
+#video-playlist video {
   width: 100%;
   height: 100%;
   opacity: 1;
 }
-#media.fadeOut video {
+#video-playlist.fadeOut video {
   opacity: 0;
   transition: opacity 2s ease-in-out;
 }
-#media .title {
+#video-playlist .title {
   position: absolute;
   left: 0;
   right: 0;
@@ -30,10 +31,10 @@
   </style>
 </head>
 <body>
-  <div id='media'></div>
+  <div id='video-playlist'></div>
 </body>
 <script>
-const playlist = new PlaylistMedia([
+const playlist = new VideoPlaylist([
   {
     video: '1.mp4',
     actions: [
@@ -48,6 +49,11 @@ const playlist = new PlaylistMedia([
         time: 2,
         duration: 2,
         title: 'PAUSE'
+      },
+      {
+        time: 2,
+        duration: 2,
+        title: 'PAUSE 2'
       },
       {
         time: 'end',
@@ -69,7 +75,7 @@ const playlist = new PlaylistMedia([
   }
 ],
 {
-  dom: document.getElementById('media')
+  dom: document.getElementById('video-playlist')
 })
 playlist.play()
 </script>

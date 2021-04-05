@@ -1,27 +1,27 @@
 {
-  "name": "playlist-media",
+  "name": "video-playlist",
   "version": "0.0.0",
   "description": "Plays a list of media items",
-  "main": "PlaylistMedia.js",
+  "main": "VideoPlaylist.js",
   "scripts": {
     "build": "browserify index.js -o dist/app.js",
-    "doc": "jsdoc -d doc/ PlaylistMedia.js",
+    "doc": "jsdoc -d doc/ VideoPlaylist.js",
     "http-server": "http-server ./ -p 8000",
-    "lint": "standard --fix PlaylistMedia.js",
+    "lint": "standard --fix VideoPlaylist.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepare": "npm run build",
     "watch": "watchify -d index.js -o dist/app.js -v"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/plepe/PlaylistMedia.git"
+    "url": "git+https://github.com/plepe/VideoPlaylist.git"
   },
   "author": "Stephan Bösch-Plepelits <skunk@xover.mud.at>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/plepe/PlaylistMedia/issues"
+    "url": "https://github.com/plepe/video-playlist/issues"
   },
-  "homepage": "https://github.com/plepe/PlaylistMedia#readme",
+  "homepage": "https://github.com/plepe/video-playlist#readme",
   "devDependencies": {
     "browserify": "^17.0.0",
     "http-server": "^0.12.3",

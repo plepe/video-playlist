@@ -33,48 +33,48 @@ const async = {
  */
 
 /*
- * @event PlaylistMedia#play Start playing a video.
+ * @event VideoPlaylist#play Start playing a video.
  * @type {object} The entry from the video definition.
  */
 
 /*
- * @event PlaylistMedia#ended Ended playing a video.
+ * @event VideoPlaylist#ended Ended playing a video.
  * @type {object} The entry from the video definition.
  */
 
 /*
- * @event PlaylistMedia#action An action is being executed.
+ * @event VideoPlaylist#action An action is being executed.
  * @type {object} The entry from the video definition.
  * @type {object} The current action.
  */
 
 /*
- * @event PlaylistMedia#pauseStart A pause is started.
+ * @event VideoPlaylist#pauseStart A pause is started.
  * @type {object} The entry from the video definition.
  * @type {object} The current pause.
  */
 
 /*
- * @event PlaylistMedia#pauseEnd A pause is ended.
+ * @event VideoPlaylist#pauseEnd A pause is ended.
  * @type {object} The entry from the video definition.
  * @type {object} The current pause.
  */
 
 /*
- * @event PlaylistMedia#endedAll Ended playing all videos.
+ * @event VideoPlaylist#endedAll Ended playing all videos.
  */
 
 /**
- * PlaylistMedia - class that plays a list of media files consecutively
+ * VideoPlaylist - class that plays a list of media files consecutively
  * @property {number} index Current index of the played media file
- * @fires PlaylistMedia#play
- * @fires PlaylistMedia#ended
- * @fires PlaylistMedia#endedAll
- * @fires PlaylistMedia#action
- * @fires PlaylistMedia#pauseStart
- * @fires PlaylistMedia#pauseEnd
+ * @fires VideoPlaylist#play
+ * @fires VideoPlaylist#ended
+ * @fires VideoPlaylist#endedAll
+ * @fires VideoPlaylist#action
+ * @fires VideoPlaylist#pauseStart
+ * @fires VideoPlaylist#pauseEnd
  */
-class PlaylistMedia extends EventEmitter {
+class VideoPlaylist extends EventEmitter {
   /**
    * @param {MediaItem[]} list list of media items
    * @param {Object} options options
@@ -303,4 +303,4 @@ class PlaylistMedia extends EventEmitter {
   }
 }
 
-module.exports = PlaylistMedia
+module.exports = VideoPlaylist
