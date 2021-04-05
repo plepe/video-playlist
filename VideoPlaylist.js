@@ -307,7 +307,7 @@ class VideoPlaylist extends EventEmitter {
     }
 
     const pauses = entry.pauses || []
-    return (entry.videoDuration || 0) +
+    return (entry.videoDuration ? parseFloat(entry.videoDuration) : 0) +
       pauses.reduce((total, pause) => total + parseFloat(pause.duration), 0)
   }
 
