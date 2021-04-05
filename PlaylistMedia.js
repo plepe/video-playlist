@@ -32,8 +32,47 @@ const async = {
  * @property {string|string[]} [classRemove] remove the specified class(es) from the parent dom node while the pause is active.
  */
 
+/*
+ * @event PlaylistMedia#play Start playing a video.
+ * @type {object} The entry from the video definition.
+ */
+
+/*
+ * @event PlaylistMedia#ended Ended playing a video.
+ * @type {object} The entry from the video definition.
+ */
+
+/*
+ * @event PlaylistMedia#action An action is being executed.
+ * @type {object} The entry from the video definition.
+ * @type {object} The current action.
+ */
+
+/*
+ * @event PlaylistMedia#pauseStart A pause is started.
+ * @type {object} The entry from the video definition.
+ * @type {object} The current pause.
+ */
+
+/*
+ * @event PlaylistMedia#pauseEnd A pause is ended.
+ * @type {object} The entry from the video definition.
+ * @type {object} The current pause.
+ */
+
+/*
+ * @event PlaylistMedia#endedAll Ended playing all videos.
+ */
+
 /**
  * PlaylistMedia - class that plays a list of media files consecutively
+ * @property {number} index Current index of the played media file
+ * @fires PlaylistMedia#play
+ * @fires PlaylistMedia#ended
+ * @fires PlaylistMedia#endedAll
+ * @fires PlaylistMedia#action
+ * @fires PlaylistMedia#pauseStart
+ * @fires PlaylistMedia#pauseEnd
  */
 class PlaylistMedia extends EventEmitter {
   /**
@@ -111,6 +150,7 @@ class PlaylistMedia extends EventEmitter {
 
     this.index = this.current.index
     if (this.index === null) {
+      this.emit('endedAll', entry)
       return
     }
 
@@ -251,6 +291,8 @@ class PlaylistMedia extends EventEmitter {
 
   next () {
     if (this.current) {
+      this.emit('ended')
+
       this.current.index = null
       this.preloadList.push(this.current)
       this.current = null
