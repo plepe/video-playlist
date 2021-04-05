@@ -10,6 +10,16 @@
   width: 600px;
   height: 400px;
 }
+#media .title {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
   </style>
 </head>
 <body>
@@ -19,14 +29,23 @@
 const playlist = new PlaylistMedia([
   {
     video: '1.mp4',
+    actions: [
+      {
+        time: 0,
+        titleDuration: 2,
+        title: 'VIDEO 1'
+      }
+    ],
     pauses: [
       {
         time: 2,
         duration: 2,
+        title: 'FOO BAR'
       },
       {
         time: 'end',
         duration: 2,
+        title: 'THE END'
       }
     ]
   },

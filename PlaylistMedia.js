@@ -16,7 +16,7 @@ const async = {
 /**
  * @typedef {Object} Action - an action to be executed at a certain position in a video/audio
  * @property {string|number} time timestamp (in seconds) when to execute the action in seconds or 'end'
- * @property {DOMNode} [title] A DOMNode which will be shown over the video
+ * @property {string|DOMNode} [title] HTML Text or a DOMNode which will be shown over the video. If it's a HTML text, it will be created as <div> with a class 'title'.
  * @property {number} [titleDuration] Duration (in seconds) for which this title is shown
  */
 
@@ -25,7 +25,7 @@ const async = {
  * @property {string|number} time timestamp (in seconds) when to execute the action in seconds or 'end'
  * @property {string} duration (in seconds) after which the action(s) should be reverted.
  * @property {number} [pause] pause the video for the specified amount of seconds
- * @property {DOMNode} [title] A DOMNode which will be shown over the video
+ * @property {string|DOMNode} [title] HTML Text or a DOMNode which will be shown over the video. If it's a HTML text, it will be created as <div> with a class 'title'.
  */
 
 /**
@@ -165,9 +165,9 @@ class PlaylistMedia extends EventEmitter {
       this.emit('action', entry, action)
 
       if (action.title) {
-        this.dom.appendChild(action.title)
+        const title = this.showTitle(action.title)
         if (action.titleDuration) {
-          window.setTimeout(() => this.dom.removeChild(action.title), action.titleDuration * 1000)
+          window.setTimeout(() => this.dom.removeChild(title), action.titleDuration * 1000)
         }
       }
     })
@@ -184,8 +184,15 @@ class PlaylistMedia extends EventEmitter {
 
         this.emit('pauseStart', entry, pause)
 
+        let title
+        if (pause.title) {
+          title = this.showTitle(pause.title)
+        }
+
         window.setTimeout(() => {
-          this.endPause(entry, pause)
+          if (title) {
+            this.dom.removeChild(title)
+          }
 
           this.emit('pauseEnd', entry, pause)
 
@@ -202,7 +209,16 @@ class PlaylistMedia extends EventEmitter {
     )
   }
 
-  endPause (entry, action) {
+  showTitle (title) {
+    let result = title
+    if (typeof title === 'string') {
+      result = document.createElement('div')
+      result.className = 'title'
+      result.innerHTML = title
+    }
+
+    this.dom.appendChild(result)
+    return result
   }
 
   next () {
