@@ -6,15 +6,13 @@ const async = {
 /**
  * @typedef {Object} MediaItem - an entry in the playlist
  * @property {string} video href of video file
- * @property {string} audio href of audio file
  * @property {number} videoDuration duration of the video in seconds (will be set/updated of the real duration, when the metadata has been loaded)
- * @property {number} audioDuration duration of the audio in seconds (will be set/updated of the real duration, when the metadata has been loaded)
- * @property {Action[]} actions Actions which will be executed at certain positions in the video/audio
+ * @property {Action[]} actions Actions which will be executed at certain positions in the video
  * @property {Pause[]} pauses At these positions, the video should pause and certain actions should happen (which will be reverted at the end of the pause).
  */
 
 /**
- * @typedef {Object} Action - an action to be executed at a certain position in a video/audio
+ * @typedef {Object} Action - an action to be executed at a certain position in a video
  * @property {string|number} time timestamp (in seconds) when to execute the action in seconds or 'end'
  * @property {string|DOMNode} [title] HTML Text or a DOMNode which will be shown over the video. If it's a HTML text, it will be created as <div> with a class 'title'.
  * @property {number} [titleDuration] Duration (in seconds) for which this title is shown
@@ -23,7 +21,7 @@ const async = {
  */
 
 /**
- * @typedef {Object} Pause - an action to be executed at a certain position in a video/audio which will be reverted at the end of the pause
+ * @typedef {Object} Pause - an action to be executed at a certain position in a video which will be reverted at the end of the pause
  * @property {string|number} time timestamp (in seconds) when to execute the action in seconds or 'end'
  * @property {string} duration (in seconds) after which the action(s) should be reverted.
  * @property {number} [pause] pause the video for the specified amount of seconds
@@ -97,8 +95,7 @@ class VideoPlaylist extends EventEmitter {
     for (let i = 0; i < 3; i++) {
       const entry = {
         index: null,
-        video: document.createElement('video'),
-        audio: new window.Audio()
+        video: document.createElement('video')
       }
 
       entry.video.onended = () => this.end()
@@ -109,11 +106,6 @@ class VideoPlaylist extends EventEmitter {
       }
       entry.video.onseeked = () => this.calcNextActionOrPause()
       entry.video.onseeking = () => this.calcNextActionOrPause()
-      entry.audio.onended = () => this.end()
-      entry.audio.preload = 'auto'
-      entry.audio.onloadedmetadata = () => {
-        this.list[entry.index].audioDuration = entry.audio.duration
-      }
 
       this.preloadList.push(entry)
     }
@@ -134,7 +126,6 @@ class VideoPlaylist extends EventEmitter {
       const entry = this.list[preload.index]
 
       preload.video.src = entry.video || null
-      preload.audio.src = entry.audio || null
     })
   }
 
@@ -159,9 +150,6 @@ class VideoPlaylist extends EventEmitter {
     if (entry.video) {
       this.options.dom.appendChild(this.current.video)
       this.current.video.play()
-    }
-    if (entry.audio) {
-      this.current.audio.play()
     }
 
     this.emit('play', entry)
