@@ -41,6 +41,16 @@ const async = {
  */
 
 /*
+ * @event VideoPlaylist#seeked
+ * @type {object} The entry from the video definition.
+ */
+
+/*
+ * @event VideoPlaylist#seeking
+ * @type {object} The entry from the video definition.
+ */
+
+/*
  * @event VideoPlaylist#ended Ended playing a video.
  * @type {object} The entry from the video definition.
  */
@@ -72,6 +82,8 @@ const async = {
  * @property {number} index Current index of the played media file
  * @fires VideoPlaylist#play
  * @fires VideoPlaylist#loadedmetadata
+ * @fires VideoPlaylist#seeked
+ * @fires VideoPlaylist#seeking
  * @fires VideoPlaylist#ended
  * @fires VideoPlaylist#endedAll
  * @fires VideoPlaylist#action
@@ -112,8 +124,14 @@ class VideoPlaylist extends EventEmitter {
         this.list[entry.index].videoDuration = entry.video.duration
         this.emit('loadedmetadata', entry)
       }
-      entry.video.onseeked = () => this.calcNextActionOrPause()
-      entry.video.onseeking = () => this.calcNextActionOrPause()
+      entry.video.onseeked = () => {
+        this.emit('seeked', entry)
+        this.calcNextActionOrPause()
+      }
+      entry.video.onseeking = () => {
+        this.emit('seeking', entry)
+        this.calcNextActionOrPause()
+      }
 
       this.preloadList.push(entry)
     }
