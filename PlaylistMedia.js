@@ -1,4 +1,7 @@
 const EventEmitter = require('events')
+const async = {
+  eachSeries: require('async/eachSeries')
+}
 
 /**
  * @typedef {Object} MediaItem - an entry in the playlist
@@ -7,14 +10,22 @@ const EventEmitter = require('events')
  * @property {number} videoDuration duration of the video in seconds (will be set/updated of the real duration, when the metadata has been loaded)
  * @property {number} audioDuration duration of the audio in seconds (will be set/updated of the real duration, when the metadata has been loaded)
  * @property {Action[]} actions Actions which will be executed at certain positions in the video/audio
+ * @property {Pause[]} pauses At these positions, the video should pause and certain actions should happen (which will be reverted at the end of the pause).
  */
 
 /**
  * @typedef {Object} Action - an action to be executed at a certain position in a video/audio
- * @property {string|number} time timestamp when to execut the action in seconds or 'end'
+ * @property {string|number} time timestamp (in seconds) when to execute the action in seconds or 'end'
+ * @property {DOMNode} [title] A DOMNode which will be shown over the video
+ * @property {number} [titleDuration] Duration (in seconds) for which this title is shown
+ */
+
+/**
+ * @typedef {Object} Pause - an action to be executed at a certain position in a video/audio which will be reverted at the end of the pause
+ * @property {string|number} time timestamp (in seconds) when to execute the action in seconds or 'end'
+ * @property {string} duration (in seconds) after which the action(s) should be reverted.
  * @property {number} [pause] pause the video for the specified amount of seconds
  * @property {DOMNode} [title] A DOMNode which will be shown over the video
- * @property {number} [titleDuration] Duration for which this title is shown
  */
 
 /**
@@ -53,8 +64,8 @@ class PlaylistMedia extends EventEmitter {
       entry.video.onloadedmetadata = () => {
         this.list[entry.index].videoDuration = entry.video.duration
       }
-      entry.video.onseeked = () => this.calcNextAction()
-      entry.video.onseeking = () => this.calcNextAction()
+      entry.video.onseeked = () => this.calcNextActionOrPause()
+      entry.video.onseeking = () => this.calcNextActionOrPause()
       entry.audio.onended = () => this.end()
       entry.audio.preload = 'auto'
       entry.audio.onloadedmetadata = () => {
@@ -112,72 +123,86 @@ class PlaylistMedia extends EventEmitter {
     this.emit('play', entry)
 
     this.current.actionIndex = 0
-    this.calcNextAction()
+    this.current.pauseIndex = 0
+    this.calcNextActionOrPause()
   }
 
-  calcNextAction () {
+  calcNextActionOrPause () {
     const entry = this.list[this.index]
-
-    if (!entry.actions) {
-      return
-    }
 
     const currentPosition = this.current.video.currentTime
 
     // filter
-    const nextActions = entry.actions.filter((action, index) => action.time >= currentPosition && index >= this.current.actionIndex)
-    if (nextActions.length) {
-      const action = nextActions[0]
-      this.current.actionIndex = entry.actions.indexOf(action) + 1
+    const nextActions = entry.actions ? entry.actions.filter((action, index) => action.time >= currentPosition && index >= this.current.actionIndex) : []
+    const nextPauses = entry.pauses ? entry.pauses.filter((pause, index) => pause.time >= currentPosition && index >= this.current.pauseIndex) : []
 
-      if (action.time === currentPosition) {
-        this.executeAction(entry, action)
-      } else {
-        window.setTimeout(() => {
-          this.executeAction(entry, action)
-        }, (action.time - currentPosition) * 1000)
-      }
+    const time = Math.min(
+      nextActions.length ? nextActions[0].time : global.Infinity, 
+      nextPauses.length ? nextPauses[0].time : global.Infinity
+    )
+
+    if (time === currentPosition) {
+      this.executeActionsOrPauses(entry, time, () => this.calcNextActionOrPause())
+    }
+    else if (time !== global.Infinity) {
+      window.setTimeout(() => this.executeActionsOrPauses(entry, time, () => this.calcNextActionOrPause()), (time - currentPosition) * 1000)
     }
   }
 
   end () {
     const entry = this.list[this.index]
 
-    const nextActions = entry.actions.filter((action, index) => action.time == 'end')
-
-    if (nextActions.length) {
-      nextActions.forEach(action => this.executeAction(entry, action))
-    } else {
-      this.next()
-    }
+    this.executeActionsOrPauses(entry, 'end', () => this.next())
   }
 
-  executeAction (entry, action) {
-    this.emit('action', entry, action)
+  executeActionsOrPauses (entry, time, callback) {
+    const actions = entry.actions ? entry.actions.filter((action, index) => action.time === time && index >= this.current.actionIndex) : []
+    const pauses = entry.pauses ? entry.pauses.filter((pause, index) => pause.time === time && index >= this.current.pauseIndex) : []
 
-    if (action.title) {
-      this.dom.appendChild(action.title)
-      if (action.titleDuration) {
-        window.setTimeout(() => this.dom.removeChild(action.title), action.titleDuration * 1000)
+    actions.forEach(action => {
+      this.current.actionIndex = entry.actions.indexOf(action) + 1
+
+      this.emit('action', entry, action)
+
+      if (action.title) {
+        this.dom.appendChild(action.title)
+        if (action.titleDuration) {
+          window.setTimeout(() => this.dom.removeChild(action.title), action.titleDuration * 1000)
+        }
       }
-    }
+    })
 
-    if (action.pause) {
+    if (pauses.length) {
       this.current.video.pause()
-
-      window.setTimeout(() => this.endAction(entry, action), action.pause * 1000)
     } else {
-      this.endAction(entry, action)
+      return callback()
     }
+
+    async.eachSeries(pauses,
+      (pause, done) => {
+        this.current.pauseIndex = entry.pauses.indexOf(pause) + 1
+
+        this.emit('pauseStart', entry, pause)
+
+        window.setTimeout(() => {
+          this.endPause(entry, pause)
+
+          this.emit('pauseEnd', entry, pause)
+
+          done()
+        }, pause.duration * 1000)
+      },
+      () => {
+        if (time !== 'end') {
+          this.current.video.play()
+        }
+
+        callback()
+      }
+    )
   }
 
-  endAction (entry, action) {
-    if (action.time === 'end') {
-      this.next()
-    } else {
-      this.current.video.play()
-      this.calcNextAction()
-    }
+  endPause (entry, action) {
   }
 
   next () {

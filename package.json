@@ -28,5 +28,8 @@
     "jsdoc": "^3.6.6",
     "standard": "^16.0.3",
     "watchify": "^4.0.0"
+  },
+  "dependencies": {
+    "async": "^3.2.0"
   }
 }
