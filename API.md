@@ -26,7 +26,7 @@
 VideoPlaylist - class that plays a list of media files consecutively
 
 **Kind**: global class  
-**Emits**: <code>VideoPlaylist#event:play</code>, <code>VideoPlaylist#event:ended</code>, <code>VideoPlaylist#event:endedAll</code>, <code>VideoPlaylist#event:action</code>, <code>VideoPlaylist#event:pauseStart</code>, <code>VideoPlaylist#event:pauseEnd</code>  
+**Emits**: <code>VideoPlaylist#event:play</code>, <code>VideoPlaylist#event:loadedmetadata</code>, <code>VideoPlaylist#event:ended</code>, <code>VideoPlaylist#event:endedAll</code>, <code>VideoPlaylist#event:action</code>, <code>VideoPlaylist#event:pauseStart</code>, <code>VideoPlaylist#event:pauseEnd</code>  
 **Properties**
 
 | Name | Type | Description |

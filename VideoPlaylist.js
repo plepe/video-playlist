@@ -36,6 +36,11 @@ const async = {
  */
 
 /*
+ * @event VideoPlaylist#loadedmetadata The metadata has been updated.
+ * @type {object} The entry from the video definition.
+ */
+
+/*
  * @event VideoPlaylist#ended Ended playing a video.
  * @type {object} The entry from the video definition.
  */
@@ -66,6 +71,7 @@ const async = {
  * VideoPlaylist - class that plays a list of media files consecutively
  * @property {number} index Current index of the played media file
  * @fires VideoPlaylist#play
+ * @fires VideoPlaylist#loadedmetadata
  * @fires VideoPlaylist#ended
  * @fires VideoPlaylist#endedAll
  * @fires VideoPlaylist#action
@@ -104,6 +110,7 @@ class VideoPlaylist extends EventEmitter {
       entry.video.controls = true
       entry.video.onloadedmetadata = () => {
         this.list[entry.index].videoDuration = entry.video.duration
+        this.emit('loadedmetadata', entry)
       }
       entry.video.onseeked = () => this.calcNextActionOrPause()
       entry.video.onseeking = () => this.calcNextActionOrPause()
