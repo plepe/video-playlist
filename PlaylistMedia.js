@@ -18,6 +18,8 @@ const async = {
  * @property {string|number} time timestamp (in seconds) when to execute the action in seconds or 'end'
  * @property {string|DOMNode} [title] HTML Text or a DOMNode which will be shown over the video. If it's a HTML text, it will be created as <div> with a class 'title'.
  * @property {number} [titleDuration] Duration (in seconds) for which this title is shown
+ * @property {string|string[]} [classAdd] add the specified class(es) to the parent dom node
+ * @property {string|string[]} [classRemove] remove the specified class(es) from the parent dom node
  */
 
 /**
@@ -26,6 +28,8 @@ const async = {
  * @property {string} duration (in seconds) after which the action(s) should be reverted.
  * @property {number} [pause] pause the video for the specified amount of seconds
  * @property {string|DOMNode} [title] HTML Text or a DOMNode which will be shown over the video. If it's a HTML text, it will be created as <div> with a class 'title'.
+ * @property {string|string[]} [classAdd] add the specified class(es) to the parent dom node while the pause is active.
+ * @property {string|string[]} [classRemove] remove the specified class(es) from the parent dom node while the pause is active.
  */
 
 /**
@@ -170,6 +174,8 @@ class PlaylistMedia extends EventEmitter {
           window.setTimeout(() => this.dom.removeChild(title), action.titleDuration * 1000)
         }
       }
+
+      this.classesModify(action.classAdd, action.classRemove)
     })
 
     if (pauses.length) {
@@ -189,10 +195,14 @@ class PlaylistMedia extends EventEmitter {
           title = this.showTitle(pause.title)
         }
 
+        this.classesModify(pause.classAdd, pause.classRemove)
+
         window.setTimeout(() => {
           if (title) {
             this.dom.removeChild(title)
           }
+
+          this.classesModify(pause.classRemove, pause.classAdd)
 
           this.emit('pauseEnd', entry, pause)
 
@@ -219,6 +229,24 @@ class PlaylistMedia extends EventEmitter {
 
     this.dom.appendChild(result)
     return result
+  }
+
+  classesModify (add, remove) {
+    if (add) {
+      if (Array.isArray(add)) {
+        this.dom.classList.add.apply(null, add)
+      } else {
+        this.dom.classList.add(add)
+      }
+    }
+
+    if (remove) {
+      if (Array.isArray(remove)) {
+        this.dom.classList.remove.apply(null, remove)
+      } else {
+        this.dom.classList.remove(remove)
+      }
+    }
   }
 
   next () {

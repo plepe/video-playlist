@@ -9,6 +9,11 @@
 #media video {
   width: 600px;
   height: 400px;
+  opacity: 1;
+}
+#media.fadeOut video {
+  opacity: 0;
+  transition: opacity 2s ease-in-out;
 }
 #media .title {
   position: absolute;
@@ -45,7 +50,8 @@ const playlist = new PlaylistMedia([
       {
         time: 'end',
         duration: 2,
-        title: 'THE END'
+        title: 'THE END',
+        classAdd: 'fadeOut'
       }
     ]
   },
