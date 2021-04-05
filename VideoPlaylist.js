@@ -141,7 +141,7 @@ class VideoPlaylist extends EventEmitter {
 
     this.index = this.current.index
     if (this.index === null) {
-      this.emit('endedAll', entry)
+      this.emit('endedAll')
       return
     }
 
