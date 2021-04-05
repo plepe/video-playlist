@@ -95,6 +95,7 @@ class VideoPlaylist extends EventEmitter {
    * @param {DOMNode} dom Parent DOMNode where videos and titles will be shown
    * @param {MediaItem[]} list list of media items
    * @param {Object} options options
+   * @param {boolean} [options.controls=false] Show controls on the video
    */
   constructor (dom, list, options) {
     super()
@@ -120,7 +121,7 @@ class VideoPlaylist extends EventEmitter {
 
       entry.video.onended = () => this.end()
       entry.video.preload = 'auto'
-      entry.video.controls = true
+      entry.video.controls = this.options.controls || false
       entry.video.onloadedmetadata = () => {
         this.list[entry.index].videoDuration = entry.video.duration
         this.emit('loadedmetadata', entry)

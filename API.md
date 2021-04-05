@@ -47,11 +47,12 @@ VideoPlaylist - class that plays a list of media files consecutively
 
 ### new VideoPlaylist(dom, list, options)
 
-| Param | Type | Description |
-| --- | --- | --- |
-| dom | <code>DOMNode</code> | Parent DOMNode where videos and titles will be shown |
-| list | [<code>Array.&lt;MediaItem&gt;</code>](#MediaItem) | list of media items |
-| options | <code>Object</code> | options |
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| dom | <code>DOMNode</code> |  | Parent DOMNode where videos and titles will be shown |
+| list | [<code>Array.&lt;MediaItem&gt;</code>](#MediaItem) |  | list of media items |
+| options | <code>Object</code> |  | options |
+| [options.controls] | <code>boolean</code> | <code>false</code> | Show controls on the video |
 
 <a name="VideoPlaylist+currentDuration"></a>
 
