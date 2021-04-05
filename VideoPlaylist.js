@@ -289,6 +289,40 @@ class VideoPlaylist extends EventEmitter {
     this.preload()
     this.play()
   }
+
+  /**
+   * return the duration of the video with index n in seconds (including pauses)
+   * @param {number} index index of the video
+   * @returns {?number} duration in seconds
+   */
+  durationIndex (index) {
+    if (index === null || index > this.list.length || index < 0) {
+      return null
+    }
+
+    const entry = this.list[index]
+
+    const pauses = entry.pauses || []
+    return this.current.video.duration +
+      pauses.reduce((total, pause) => total + parseFloat(pause.duration), 0)
+  }
+
+  /**
+   * return the duration of the current video in seconds (including pauses)
+   * @param {number} index index of the video
+   * @return {number} duration in seconds
+   */
+  get currentDuration () {
+    return this.durationIndex(this.current.index)
+  }
+
+  /**
+   * return the duration of the all videos in seconds (including pauses)
+   * @return {number} duration in seconds
+   */
+  get duration () {
+    return this.list.reduce((total, entry, index) => total + this.durationIndex(index), 0)
+  }
 }
 
 module.exports = VideoPlaylist
