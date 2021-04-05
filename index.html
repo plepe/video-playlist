@@ -4,11 +4,13 @@
   <script src='dist/app.js'></script>
   <style>
 #media {
+  width: 600px;
+  height: 400px;
   position: relative;
 }
 #media video {
-  width: 600px;
-  height: 400px;
+  width: 100%;
+  height: 100%;
   opacity: 1;
 }
 #media.fadeOut video {
@@ -45,7 +47,7 @@ const playlist = new PlaylistMedia([
       {
         time: 2,
         duration: 2,
-        title: 'FOO BAR'
+        title: 'PAUSE'
       },
       {
         time: 'end',
@@ -56,7 +58,14 @@ const playlist = new PlaylistMedia([
     ]
   },
   {
-    video: '2.mp4'
+    video: '2.mp4',
+    pauses: [
+      {
+        time: 0,
+        duration: 2,
+        title: 'VIDEO 2'
+      }
+    ]
   }
 ],
 {
