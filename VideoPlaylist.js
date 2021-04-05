@@ -301,11 +301,10 @@ class VideoPlaylist extends EventEmitter {
    * @returns {?number} duration in seconds
    */
   durationIndex (index) {
-    if (index === null || index > this.list.length || index < 0) {
+    const entry = this.list[index]
+    if (!entry) {
       return null
     }
-
-    const entry = this.list[index]
 
     const pauses = entry.pauses || []
     return this.current.video.duration +
@@ -315,7 +314,7 @@ class VideoPlaylist extends EventEmitter {
   /**
    * return the duration of the current video in seconds (including pauses)
    * @param {number} index index of the video
-   * @return {number} duration in seconds
+   * @return {?number} duration in seconds
    */
   get currentDuration () {
     return this.durationIndex(this.current.index)
@@ -331,10 +330,13 @@ class VideoPlaylist extends EventEmitter {
 
   /**
    * return the position of the current video in seconds (including pauses)
-   * @return {number} duration in seconds
+   * @return {?number} duration in seconds
    */
   get currentCurrentTime () {
     const entry = this.list[this.current.index]
+    if (!entry) {
+      return null
+    }
 
     const time = this.actionTime
     const pauses = entry.pauses ? entry.pauses.filter((pause, index) => (time >= pause.time || this.actionTime === 'end') && index < this.current.pauseIndex) : []
@@ -346,10 +348,14 @@ class VideoPlaylist extends EventEmitter {
 
   /**
    * return the position of all videos in seconds (including pauses)
-   * @return {number} duration in seconds
+   * @return {?number} duration in seconds
    */
   get currentTime () {
     const entry = this.list[this.current.index]
+    if (!entry) {
+      return null
+    }
+
     let result = 0
 
     if (entry) {
