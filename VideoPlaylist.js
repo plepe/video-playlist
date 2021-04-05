@@ -92,15 +92,16 @@ const async = {
  */
 class VideoPlaylist extends EventEmitter {
   /**
+   * @param {DOMNode} dom Parent DOMNode where videos and titles will be shown
    * @param {MediaItem[]} list list of media items
    * @param {Object} options options
    */
-  constructor (list, options) {
+  constructor (dom, list, options) {
     super()
     this.list = list
     this.preloadIndex = 0
     this.options = options
-    this.dom = this.options.dom
+    this.dom = dom
     this.actionTime = 0
 
     this.preloadList = []
@@ -174,7 +175,7 @@ class VideoPlaylist extends EventEmitter {
     const entry = this.list[this.index]
 
     if (entry.video) {
-      this.options.dom.appendChild(this.current.video)
+      this.dom.appendChild(this.current.video)
       this.current.video.play()
     }
 

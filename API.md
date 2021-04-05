@@ -35,7 +35,7 @@ VideoPlaylist - class that plays a list of media files consecutively
 
 
 * [VideoPlaylist](#VideoPlaylist)
-    * [new VideoPlaylist(list, options)](#new_VideoPlaylist_new)
+    * [new VideoPlaylist(dom, list, options)](#new_VideoPlaylist_new)
     * [.currentDuration](#VideoPlaylist+currentDuration) ⇒ <code>number</code>
     * [.duration](#VideoPlaylist+duration) ⇒ <code>number</code>
     * [.currentCurrentTime](#VideoPlaylist+currentCurrentTime) ⇒ <code>number</code>
@@ -45,10 +45,11 @@ VideoPlaylist - class that plays a list of media files consecutively
 
 <a name="new_VideoPlaylist_new"></a>
 
-### new VideoPlaylist(list, options)
+### new VideoPlaylist(dom, list, options)
 
 | Param | Type | Description |
 | --- | --- | --- |
+| dom | <code>DOMNode</code> | Parent DOMNode where videos and titles will be shown |
 | list | [<code>Array.&lt;MediaItem&gt;</code>](#MediaItem) | list of media items |
 | options | <code>Object</code> | options |
 
