@@ -83,6 +83,7 @@ class VideoPlaylist extends EventEmitter {
     this.preloadIndex = 0
     this.options = options
     this.dom = this.options.dom
+    this.actionTime = 0
 
     this.preloadList = []
     this.current = null
@@ -154,6 +155,7 @@ class VideoPlaylist extends EventEmitter {
 
     this.emit('play', entry)
 
+    this.actionTime = 0
     this.current.actionIndex = 0
     this.current.pauseIndex = 0
     this.calcNextActionOrPause()
@@ -188,6 +190,7 @@ class VideoPlaylist extends EventEmitter {
   }
 
   executeActionsOrPauses (entry, time, callback) {
+    this.actionTime = time
     const actions = entry.actions ? entry.actions.filter((action, index) => action.time === time && index >= this.current.actionIndex) : []
     const pauses = entry.pauses ? entry.pauses.filter((pause, index) => pause.time === time && index >= this.current.pauseIndex) : []
 
@@ -214,8 +217,6 @@ class VideoPlaylist extends EventEmitter {
 
     async.eachSeries(pauses,
       (pause, done) => {
-        this.current.pauseIndex = entry.pauses.indexOf(pause) + 1
-
         this.emit('pauseStart', entry, pause)
 
         let title
@@ -224,8 +225,12 @@ class VideoPlaylist extends EventEmitter {
         }
 
         this.classesModify(pause.classAdd, pause.classRemove)
+        this.pauseStart = new Date().getTime()
 
         window.setTimeout(() => {
+          this.pauseStart = undefined
+          this.current.pauseIndex = entry.pauses.indexOf(pause) + 1
+
           if (title) {
             this.dom.removeChild(title)
           }
@@ -322,6 +327,40 @@ class VideoPlaylist extends EventEmitter {
    */
   get duration () {
     return this.list.reduce((total, entry, index) => total + this.durationIndex(index), 0)
+  }
+
+  /**
+   * return the position of the current video in seconds (including pauses)
+   * @return {number} duration in seconds
+   */
+  get currentCurrentTime () {
+    const entry = this.list[this.current.index]
+
+    const time = this.actionTime
+    const pauses = entry.pauses ? entry.pauses.filter((pause, index) => (time >= pause.time || this.actionTime === 'end') && index < this.current.pauseIndex) : []
+
+    return this.current.video.currentTime +
+      (this.pauseStart === undefined ? 0 : (new Date().getTime() - this.pauseStart) / 1000) +
+      pauses.reduce((total, pause) => total + parseFloat(pause.duration), 0)
+  }
+
+  /**
+   * return the position of all videos in seconds (including pauses)
+   * @return {number} duration in seconds
+   */
+  get currentTime () {
+    const entry = this.list[this.current.index]
+    let result = 0
+
+    if (entry) {
+      result += this.currentCurrentTime
+    }
+
+    result += this.list
+      .filter((entry, index) => index < this.current.index)
+      .reduce((total, entry, index) => total + this.durationIndex(index), 0)
+
+    return result
   }
 }
 
