@@ -74,6 +74,11 @@ const async = {
  */
 
 /*
+ * @event VideoPlaylist#playing Playback is ready to start after having been paused or delayed due to lack of data.
+ * @type {object} The entry from the video definition.
+ */
+
+/*
  * @event VideoPlaylist#endedAll Ended playing all videos.
  */
 
@@ -89,6 +94,7 @@ const async = {
  * @fires VideoPlaylist#action
  * @fires VideoPlaylist#pauseStart
  * @fires VideoPlaylist#pauseEnd
+ * @fires VideoPlaylist#playing
  */
 class VideoPlaylist extends EventEmitter {
   /**
@@ -132,6 +138,10 @@ class VideoPlaylist extends EventEmitter {
       }
       entry.video.onseeking = () => {
         this.emit('seeking', entry)
+        this.calcNextActionOrPause()
+      }
+      entry.video.onplaying = () => {
+        this.emit('playing', entry)
         this.calcNextActionOrPause()
       }
 
