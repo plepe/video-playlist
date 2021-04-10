@@ -110,6 +110,7 @@ class VideoPlaylist extends EventEmitter {
     this.options = options
     this.dom = dom
     this.actionTime = 0
+    this.currentTimeout = null
 
     this.preloadList = []
     this.current = null
@@ -199,6 +200,11 @@ class VideoPlaylist extends EventEmitter {
   }
 
   calcNextActionOrPause () {
+    if (this.currentTimeout) {
+      window.clearTimeout(this.currentTimeout)
+      this.currentTimeout = null
+    }
+
     const entry = this.list[this.index]
 
     const currentPosition = this.current.video.currentTime
@@ -216,7 +222,7 @@ class VideoPlaylist extends EventEmitter {
       this.executeActionsOrPauses(entry, time, () => this.calcNextActionOrPause())
     }
     else if (time !== global.Infinity) {
-      window.setTimeout(() => this.executeActionsOrPauses(entry, time, () => this.calcNextActionOrPause()), (time - currentPosition) * 1000)
+      this.currentTimeout = window.setTimeout(() => this.executeActionsOrPauses(entry, time, () => this.calcNextActionOrPause()), (time - currentPosition) * 1000)
     }
   }
 
