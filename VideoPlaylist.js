@@ -135,15 +135,15 @@ class VideoPlaylist extends EventEmitter {
       }
       entry.video.onseeked = () => {
         this.emit('seeked', entry)
-        this.calcNextActionOrPause()
+        this.update()
       }
       entry.video.onseeking = () => {
         this.emit('seeking', entry)
-        this.calcNextActionOrPause()
+        this.update()
       }
       entry.video.onplaying = () => {
         this.emit('playing', entry)
-        this.calcNextActionOrPause()
+        this.update()
       }
 
       this.preloadList.push(entry)
@@ -196,10 +196,13 @@ class VideoPlaylist extends EventEmitter {
     this.actionTime = 0
     this.current.actionIndex = 0
     this.current.pauseIndex = 0
-    this.calcNextActionOrPause()
+    this.update()
   }
 
-  calcNextActionOrPause () {
+  /**
+   * re-calculate duration, endtime and next action/pause
+   */
+  update () {
     if (this.currentTimeout) {
       window.clearTimeout(this.currentTimeout)
       this.currentTimeout = null
@@ -219,10 +222,10 @@ class VideoPlaylist extends EventEmitter {
     )
 
     if (time === currentPosition) {
-      this.executeActionsOrPauses(entry, time, () => this.calcNextActionOrPause())
+      this.executeActionsOrPauses(entry, time, () => this.update())
     }
     else if (time !== global.Infinity) {
-      this.currentTimeout = window.setTimeout(() => this.executeActionsOrPauses(entry, time, () => this.calcNextActionOrPause()), (time - currentPosition) * 1000)
+      this.currentTimeout = window.setTimeout(() => this.executeActionsOrPauses(entry, time, () => this.update()), (time - currentPosition) * 1000)
     }
   }
 

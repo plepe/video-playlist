@@ -26,7 +26,7 @@
 VideoPlaylist - class that plays a list of media files consecutively
 
 **Kind**: global class  
-**Emits**: <code>VideoPlaylist#event:play</code>, <code>VideoPlaylist#event:loadedmetadata</code>, <code>VideoPlaylist#event:seeked</code>, <code>VideoPlaylist#event:seeking</code>, <code>VideoPlaylist#event:ended</code>, <code>VideoPlaylist#event:endedAll</code>, <code>VideoPlaylist#event:action</code>, <code>VideoPlaylist#event:pauseStart</code>, <code>VideoPlaylist#event:pauseEnd</code>  
+**Emits**: <code>VideoPlaylist#event:play</code>, <code>VideoPlaylist#event:loadedmetadata</code>, <code>VideoPlaylist#event:seeked</code>, <code>VideoPlaylist#event:seeking</code>, <code>VideoPlaylist#event:ended</code>, <code>VideoPlaylist#event:endedAll</code>, <code>VideoPlaylist#event:action</code>, <code>VideoPlaylist#event:pauseStart</code>, <code>VideoPlaylist#event:pauseEnd</code>, <code>VideoPlaylist#event:playing</code>  
 **Properties**
 
 | Name | Type | Description |
@@ -41,6 +41,7 @@ VideoPlaylist - class that plays a list of media files consecutively
     * [.currentCurrentTime](#VideoPlaylist+currentCurrentTime) ⇒ <code>number</code>
     * [.currentTime](#VideoPlaylist+currentTime) ⇒ <code>number</code>
     * [.play()](#VideoPlaylist+play)
+    * [.update()](#VideoPlaylist+update)
     * [.durationIndex(index)](#VideoPlaylist+durationIndex) ⇒ <code>number</code>
 
 <a name="new_VideoPlaylist_new"></a>
@@ -91,6 +92,12 @@ return the position of all videos in seconds (including pauses)
 
 ### videoPlaylist.play()
 play - start playing playlist
+
+**Kind**: instance method of [<code>VideoPlaylist</code>](#VideoPlaylist)  
+<a name="VideoPlaylist+update"></a>
+
+### videoPlaylist.update()
+re-calculate duration, endtime and next action/pause
 
 **Kind**: instance method of [<code>VideoPlaylist</code>](#VideoPlaylist)  
 <a name="VideoPlaylist+durationIndex"></a>
