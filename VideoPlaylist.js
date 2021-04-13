@@ -393,8 +393,28 @@ class VideoPlaylist extends EventEmitter {
   }
 
   /**
-   * return the position of all videos in seconds (including pauses)
-   * @return {?number} duration in seconds
+   * set the currentTime for the current video
+   * @param {number} timestamp in seconds
+   */
+  set currentCurrentTime (time) {
+    if (!this.current) {
+      return
+    }
+
+    const entry = this.list[this.current.index]
+    if (!entry) {
+      return
+    }
+
+    const pauses = entry.pauses ? entry.pauses.filter((pause, index) => time >= pause.time) : []
+    pauses.forEach(pause => time -= pause.duration)
+
+    this.current.video.currentTime = time
+  }
+
+  /**
+   * set the position of all videos in seconds (including pauses)
+   * @param {number} timestamp in seconds
    */
   get currentTime () {
     if (!this.current) {
@@ -417,6 +437,27 @@ class VideoPlaylist extends EventEmitter {
       .reduce((total, entry, index) => total + this.durationIndex(index), 0)
 
     return result
+  }
+
+  /**
+   * set the position of all videos in seconds (including pauses)
+   * @param {number} timestamp in seconds
+   */
+  set currentTime (time) {
+    let index
+    let restTime = time
+    for (index = 0; index < this.list.length; index++) {
+      restTime -= this.durationIndex(index)
+      if (restTime < 0) {
+        break
+      }
+    }
+
+    if (this.current.index === index) {
+      this.currentCurrentTime = this.durationIndex(index) + restTime
+    } else {
+      console.log('switching videos not supported yet!')
+    }
   }
 }
 

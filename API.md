@@ -39,7 +39,9 @@ VideoPlaylist - class that plays a list of media files consecutively
     * [.currentDuration](#VideoPlaylist+currentDuration) ⇒ <code>number</code>
     * [.duration](#VideoPlaylist+duration) ⇒ <code>number</code>
     * [.currentCurrentTime](#VideoPlaylist+currentCurrentTime) ⇒ <code>number</code>
-    * [.currentTime](#VideoPlaylist+currentTime) ⇒ <code>number</code>
+    * [.currentCurrentTime](#VideoPlaylist+currentCurrentTime)
+    * [.currentTime](#VideoPlaylist+currentTime)
+    * [.currentTime](#VideoPlaylist+currentTime)
     * [.play()](#VideoPlaylist+play)
     * [.update()](#VideoPlaylist+update)
     * [.durationIndex(index)](#VideoPlaylist+durationIndex) ⇒ <code>number</code>
@@ -81,13 +83,39 @@ return the position of the current video in seconds (including pauses)
 
 **Kind**: instance property of [<code>VideoPlaylist</code>](#VideoPlaylist)  
 **Returns**: <code>number</code> - duration in seconds  
-<a name="VideoPlaylist+currentTime"></a>
+<a name="VideoPlaylist+currentCurrentTime"></a>
 
-### videoPlaylist.currentTime ⇒ <code>number</code>
-return the position of all videos in seconds (including pauses)
+### videoPlaylist.currentCurrentTime
+set the currentTime for the current video
 
 **Kind**: instance property of [<code>VideoPlaylist</code>](#VideoPlaylist)  
-**Returns**: <code>number</code> - duration in seconds  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| timestamp | <code>number</code> | in seconds |
+
+<a name="VideoPlaylist+currentTime"></a>
+
+### videoPlaylist.currentTime
+set the position of all videos in seconds (including pauses)
+
+**Kind**: instance property of [<code>VideoPlaylist</code>](#VideoPlaylist)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| timestamp | <code>number</code> | in seconds |
+
+<a name="VideoPlaylist+currentTime"></a>
+
+### videoPlaylist.currentTime
+set the position of all videos in seconds (including pauses)
+
+**Kind**: instance property of [<code>VideoPlaylist</code>](#VideoPlaylist)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| timestamp | <code>number</code> | in seconds |
+
 <a name="VideoPlaylist+play"></a>
 
 ### videoPlaylist.play()
