@@ -397,6 +397,10 @@ class VideoPlaylist extends EventEmitter {
    * @return {?number} duration in seconds
    */
   get currentTime () {
+    if (!this.current) {
+      return 0
+    }
+
     const entry = this.list[this.current.index]
     if (!entry) {
       return null
