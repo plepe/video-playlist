@@ -123,10 +123,6 @@ class VideoPlaylist extends EventEmitter {
    * remove everything
    */
   close () {
-    this.preloadList.forEach(entry => {
-      delete entry.video
-    })
-
     while (this.dom.firstChild) {
       this.dom.removeChild(this.dom.firstChild)
     }
