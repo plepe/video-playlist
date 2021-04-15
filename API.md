@@ -42,6 +42,7 @@ VideoPlaylist - class that plays a list of media files consecutively
     * [.currentCurrentTime](#VideoPlaylist+currentCurrentTime)
     * [.currentTime](#VideoPlaylist+currentTime)
     * [.currentTime](#VideoPlaylist+currentTime)
+    * [.close()](#VideoPlaylist+close)
     * [.play()](#VideoPlaylist+play)
     * [.update()](#VideoPlaylist+update)
     * [.durationIndex(index)](#VideoPlaylist+durationIndex) ⇒ <code>number</code>
@@ -116,6 +117,12 @@ set the position of all videos in seconds (including pauses)
 | --- | --- | --- |
 | timestamp | <code>number</code> | in seconds |
 
+<a name="VideoPlaylist+close"></a>
+
+### videoPlaylist.close()
+remove everything
+
+**Kind**: instance method of [<code>VideoPlaylist</code>](#VideoPlaylist)  
 <a name="VideoPlaylist+play"></a>
 
 ### videoPlaylist.play()

@@ -119,6 +119,19 @@ class VideoPlaylist extends EventEmitter {
     this.preload()
   }
 
+  /**
+   * remove everything
+   */
+  close () {
+    this.preloadList.forEach(entry => {
+      delete entry.video
+    })
+
+    while (this.dom.firstChild) {
+      this.dom.removeChild(this.dom.firstChild)
+    }
+  }
+
   preloadListInit () {
     for (let i = 0; i < 3; i++) {
       const entry = {
