@@ -26,7 +26,7 @@
 VideoPlaylist - class that plays a list of media files consecutively
 
 **Kind**: global class  
-**Emits**: <code>VideoPlaylist#event:play</code>, <code>VideoPlaylist#event:loadedmetadata</code>, <code>VideoPlaylist#event:seeked</code>, <code>VideoPlaylist#event:seeking</code>, <code>VideoPlaylist#event:ended</code>, <code>VideoPlaylist#event:endedAll</code>, <code>VideoPlaylist#event:action</code>, <code>VideoPlaylist#event:pauseStart</code>, <code>VideoPlaylist#event:pauseEnd</code>, <code>VideoPlaylist#event:playing</code>  
+**Emits**: <code>VideoPlaylist#event:play</code>, <code>VideoPlaylist#event:loadedmetadata</code>, <code>VideoPlaylist#event:seeked</code>, <code>VideoPlaylist#event:seeking</code>, <code>VideoPlaylist#event:ended</code>, <code>VideoPlaylist#event:endedAll</code>, <code>VideoPlaylist#event:action</code>, <code>VideoPlaylist#event:pause</code>, <code>VideoPlaylist#event:pauseStart</code>, <code>VideoPlaylist#event:pauseEnd</code>, <code>VideoPlaylist#event:playing</code>  
 **Properties**
 
 | Name | Type | Description |
@@ -43,9 +43,11 @@ VideoPlaylist - class that plays a list of media files consecutively
     * [.currentTime](#VideoPlaylist+currentTime)
     * [.currentTime](#VideoPlaylist+currentTime)
     * [.close()](#VideoPlaylist+close)
+    * [.start()](#VideoPlaylist+start)
     * [.play()](#VideoPlaylist+play)
     * [.update()](#VideoPlaylist+update)
     * [.durationIndex(index)](#VideoPlaylist+durationIndex) ⇒ <code>number</code>
+    * [.pause()](#VideoPlaylist+pause)
 
 <a name="new_VideoPlaylist_new"></a>
 
@@ -123,10 +125,16 @@ set the position of all videos in seconds (including pauses)
 remove everything
 
 **Kind**: instance method of [<code>VideoPlaylist</code>](#VideoPlaylist)  
+<a name="VideoPlaylist+start"></a>
+
+### videoPlaylist.start()
+start - prepare the video for playing
+
+**Kind**: instance method of [<code>VideoPlaylist</code>](#VideoPlaylist)  
 <a name="VideoPlaylist+play"></a>
 
 ### videoPlaylist.play()
-play - start playing playlist
+play - start playing video
 
 **Kind**: instance method of [<code>VideoPlaylist</code>](#VideoPlaylist)  
 <a name="VideoPlaylist+update"></a>
@@ -147,6 +155,12 @@ return the duration of the video with index n in seconds (including pauses)
 | --- | --- | --- |
 | index | <code>number</code> | index of the video |
 
+<a name="VideoPlaylist+pause"></a>
+
+### videoPlaylist.pause()
+Pause the current video
+
+**Kind**: instance method of [<code>VideoPlaylist</code>](#VideoPlaylist)  
 <a name="MediaItem"></a>
 
 ## MediaItem : <code>Object</code>

@@ -62,9 +62,14 @@ const async = {
  */
 
 /*
- * @event VideoPlaylist#pauseStart A pause is started.
- * @type {object} The entry from the video definition.
- * @type {object} The current pause.
+ * @event videoplaylist#pause the video is being paused, for whatever reason (e.g.: planned pause, user interaction, js api, ...)
+ * @type {object} the entry from the video definition.
+ */
+
+/*
+ * @event videoplaylist#pauseStart a pause is started.
+ * @type {object} the entry from the video definition.
+ * @type {object} the current pause.
  */
 
 /*
@@ -92,6 +97,7 @@ const async = {
  * @fires VideoPlaylist#ended
  * @fires VideoPlaylist#endedAll
  * @fires VideoPlaylist#action
+ * @fires VideoPlaylist#pause
  * @fires VideoPlaylist#pauseStart
  * @fires VideoPlaylist#pauseEnd
  * @fires VideoPlaylist#playing
@@ -102,6 +108,7 @@ class VideoPlaylist extends EventEmitter {
    * @param {MediaItem[]} list list of media items
    * @param {Object} options options
    * @param {boolean} [options.controls=false] Show controls on the video
+   * @property {boolean} paused Is the video currently paused? If changed, pauses the current video.
    */
   constructor (dom, list, options) {
     super()
@@ -154,6 +161,14 @@ class VideoPlaylist extends EventEmitter {
         this.emit('playing', entry)
         this.update()
       }
+      entry.video.onpause = () => {
+        this.emit('pause', entry)
+        this.update()
+      }
+      entry.video.onplay = () => {
+        this.emit('play', entry)
+        this.update()
+      }
 
       this.preloadList.push(entry)
     }
@@ -178,9 +193,9 @@ class VideoPlaylist extends EventEmitter {
   }
 
   /**
-   * play - start playing playlist
+   * start - prepare the video for playing
    */
-  play () {
+  start () {
     while (this.dom.firstChild) {
       this.dom.removeChild(this.dom.firstChild)
     }
@@ -197,15 +212,23 @@ class VideoPlaylist extends EventEmitter {
 
     if (entry.video) {
       this.dom.appendChild(this.current.video)
-      this.current.video.play()
     }
-
-    this.emit('play', entry)
 
     this.actionTime = 0
     this.current.actionIndex = 0
     this.current.pauseIndex = 0
     this.update()
+  }
+
+  /**
+   * play - start playing video
+   */
+  play () {
+    if (!this.current) {
+      this.start()
+    }
+
+    this.current.video.play()
   }
 
   /**
@@ -347,6 +370,7 @@ class VideoPlaylist extends EventEmitter {
     }
 
     this.preload()
+    this.start()
     this.play()
   }
 
@@ -466,6 +490,19 @@ class VideoPlaylist extends EventEmitter {
       this.currentCurrentTime = this.durationIndex(index) + restTime
     } else {
       console.log('switching videos not supported yet!')
+    }
+  }
+
+  get paused () {
+    return this.current.video.paused
+  }
+
+  /**
+   * Pause the current video
+   */
+  pause () {
+    if (this.current) {
+      this.current.video.pause()
     }
   }
 }
