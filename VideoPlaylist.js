@@ -240,6 +240,10 @@ class VideoPlaylist extends EventEmitter {
       this.currentTimeout = null
     }
 
+    if (this.index === null) {
+      return
+    }
+
     const entry = this.list[this.index]
 
     const currentPosition = this.current.video.currentTime
@@ -371,7 +375,9 @@ class VideoPlaylist extends EventEmitter {
 
     this.preload()
     this.start()
-    this.play()
+    if (this.current.index) {
+      this.play()
+    }
   }
 
   /**
