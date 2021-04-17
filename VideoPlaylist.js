@@ -41,6 +41,11 @@ const async = {
  */
 
 /*
+ * @event VideoPlaylist#next The next video is about to start.
+ * @type {object} The entry from the video definition.
+ */
+
+/*
  * @event VideoPlaylist#seeked
  * @type {object} The entry from the video definition.
  */
@@ -213,6 +218,8 @@ class VideoPlaylist extends EventEmitter {
     if (entry.video) {
       this.dom.appendChild(this.current.video)
     }
+
+    this.emit('next', entry)
 
     this.actionTime = 0
     this.current.actionIndex = 0
