@@ -371,6 +371,11 @@ class VideoPlaylist extends EventEmitter {
   }
 
   next () {
+    if (this.currentTimeout) {
+      window.clearTimeout(this.currentTimeout)
+      this.currentTimeout = null
+    }
+
     if (this.current) {
       this.emit('ended')
 
@@ -523,6 +528,38 @@ class VideoPlaylist extends EventEmitter {
    */
   get index () {
     return this.current.index
+  }
+
+  /**
+   * start playing the entry in the playlist with index
+   */
+  set index (index) {
+    // is this the current video? restart ...
+    if (this.current.index === index) {
+      this.currentCurrentTime = 0
+      this.update()
+      return
+    }
+
+    // check if the index is already preloaded. clear other preloaded videos
+    // and store for later
+    const jump = []
+    while (this.preloadList.length && this.preloadList[0].index !== index) {
+      const entry = this.preloadList.shift()
+      entry.index = null
+      jump.push(entry)
+    }
+
+    // when we skipped all preloaders, tell preloader to load requested video
+    if (!this.preloadList.length) {
+      this.preloadIndex = index
+    }
+
+    // add skipped preloaders to the preloadList
+    this.preloadList = this.preloadList.concat(jump)
+
+    // jump to next video
+    this.next()
   }
 }
 
