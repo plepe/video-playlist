@@ -153,6 +153,10 @@ class VideoPlaylist extends EventEmitter {
       entry.video.onloadedmetadata = () => {
         this.list[entry.index].videoDuration = entry.video.duration
         this.emit('loadedmetadata', entry)
+
+	if (this.requestedCurrentTime) {
+	  this.currentTime = this.requestedCurrentTime
+	}
       }
       entry.video.onseeked = () => {
         this.emit('seeked', entry)
@@ -220,10 +224,14 @@ class VideoPlaylist extends EventEmitter {
 
     this.emit('next', entry)
 
-    this.actionTime = 0
-    this.current.actionIndex = 0
-    this.current.pauseIndex = 0
-    this.update()
+    if (this.requestedCurrentTime) {
+      this.currentTime = this.requestedCurrentTime
+    } else {
+      this.actionTime = 0
+      this.current.actionIndex = 0
+      this.current.pauseIndex = 0
+      this.update()
+    }
   }
 
   /**
@@ -500,17 +508,29 @@ class VideoPlaylist extends EventEmitter {
   set currentTime (time) {
     let index
     let restTime = time
+    this.requestedCurrentTime = null
+
     for (index = 0; index < this.list.length; index++) {
-      restTime -= this.durationIndex(index)
-      if (restTime < 0) {
-        break
+      const currentDuration = this.durationIndex(index)
+
+      if (currentDuration === null) {
+	this.requestedCurrentTime = time
+	this.index = index
+	return
+      }
+
+      if (restTime - currentDuration < 0) {
+	break
+      } else {
+	restTime -= currentDuration
       }
     }
 
     if (this.current.index === index) {
-      this.currentCurrentTime = this.durationIndex(index) + restTime
+      this.currentCurrentTime = restTime
     } else {
-      console.log('switching videos not supported yet!')
+      this.requestedTime = time
+      this.index = index
     }
   }
 
