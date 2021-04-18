@@ -207,13 +207,12 @@ class VideoPlaylist extends EventEmitter {
 
     this.current = this.preloadList.shift()
 
-    this.index = this.current.index
-    if (this.index === null) {
+    if (this.current.index === null) {
       this.emit('endedAll')
       return
     }
 
-    const entry = this.list[this.index]
+    const entry = this.list[this.current.index]
 
     if (entry.video) {
       this.dom.appendChild(this.current.video)
@@ -247,11 +246,11 @@ class VideoPlaylist extends EventEmitter {
       this.currentTimeout = null
     }
 
-    if (this.index === null) {
+    if (!this.current || this.current.index === null) {
       return
     }
 
-    const entry = this.list[this.index]
+    const entry = this.list[this.current.index]
 
     const currentPosition = this.current.video.currentTime
 
@@ -273,7 +272,7 @@ class VideoPlaylist extends EventEmitter {
   }
 
   end () {
-    const entry = this.list[this.index]
+    const entry = this.list[this.current.index]
 
     this.executeActionsOrPauses(entry, 'end', () => this.next())
   }
@@ -517,6 +516,13 @@ class VideoPlaylist extends EventEmitter {
     if (this.current) {
       this.current.video.pause()
     }
+  }
+
+  /**
+   * current index
+   */
+  get index () {
+    return this.current.index
   }
 }
 
