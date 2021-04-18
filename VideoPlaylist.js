@@ -197,7 +197,11 @@ class VideoPlaylist extends EventEmitter {
 
       const entry = this.list[preload.index]
 
-      preload.video.src = entry.video || null
+      if (!entry.video) {
+        entry.videoDuration = 0
+      } else {
+        preload.video.src = entry.video
+      }
     })
   }
 
@@ -240,6 +244,10 @@ class VideoPlaylist extends EventEmitter {
   play () {
     if (!this.current) {
       this.start()
+    }
+
+    if (this.list[this.current.index].videoDuration === 0) {
+      return this.next()
     }
 
     this.current.video.play()
