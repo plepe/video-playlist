@@ -559,7 +559,7 @@ class VideoPlaylist extends EventEmitter {
    */
   set index (index) {
     // is this the current video? restart ...
-    if (this.current.index === index) {
+    if (this.current && this.current.index === index) {
       this.currentCurrentTime = 0
       this.update()
       return
