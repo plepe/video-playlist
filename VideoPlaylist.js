@@ -441,7 +441,10 @@ class VideoPlaylist extends EventEmitter {
    * @return {number} duration in seconds
    */
   get duration () {
-    return this.list.reduce((total, entry, index) => total + this.durationIndex(index), 0)
+    return this.list
+      .map((entry, index) => this.durationIndex(index))
+      .filter(duration => duration)
+      .reduce((total, duration) => total + duration, 0)
   }
 
   /**
