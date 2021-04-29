@@ -321,6 +321,8 @@ class VideoPlaylist extends EventEmitter {
 
     async.eachSeries(pauses,
       (pause, done) => {
+        this.current.pauseIndex = entry.pauses.indexOf(pause) + 1
+
         this.emit('pauseStart', entry, pause)
 
         let title
@@ -333,7 +335,6 @@ class VideoPlaylist extends EventEmitter {
 
         window.setTimeout(() => {
           this.pauseStart = undefined
-          this.current.pauseIndex = entry.pauses.indexOf(pause) + 1
 
           if (title) {
             this.dom.removeChild(title)
