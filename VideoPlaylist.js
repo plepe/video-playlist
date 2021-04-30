@@ -135,6 +135,14 @@ class VideoPlaylist extends EventEmitter {
    * remove everything
    */
   close () {
+    if (this.current) {
+      this.current.video.pause()
+    }
+
+    this.current = null
+    this.preloadList = []
+    this.list = []
+
     while (this.dom.firstChild) {
       this.dom.removeChild(this.dom.firstChild)
     }
@@ -151,6 +159,10 @@ class VideoPlaylist extends EventEmitter {
       entry.video.preload = 'auto'
       entry.video.controls = this.options.controls || false
       entry.video.onloadedmetadata = () => {
+        if (!this.list.length) {
+          return
+        }
+
         this.list[entry.index].videoDuration = entry.video.duration
         this.emit('loadedmetadata', entry)
 
@@ -215,8 +227,12 @@ class VideoPlaylist extends EventEmitter {
 
     this.current = this.preloadList.shift()
 
-    if (this.current.index === null) {
+    if (!this.current || this.current.index === null) {
       this.emit('endedAll')
+      return
+    }
+
+    if (this.current.index > this.list.length) {
       return
     }
 
