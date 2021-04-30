@@ -372,7 +372,7 @@ class VideoPlaylist extends EventEmitter {
 
     this.classesModify(pause.classAdd, pause.classRemove)
 
-    window.setTimeout(
+    this.pauseTimeout = window.setTimeout(
       () => this._pauseEnd(entry, pause, title),
       (duration === null ? pause.duration : duration) * 1000
     )
@@ -521,6 +521,11 @@ class VideoPlaylist extends EventEmitter {
     const entry = this.list[this.current.index]
     if (!entry) {
       return
+    }
+
+    if (this.pauseTimeout) {
+      global.clearTimeout(this.pauseTimeout)
+      this.pauseTimeout = null
     }
 
     let pauses = []
