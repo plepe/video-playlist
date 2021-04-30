@@ -306,6 +306,10 @@ class VideoPlaylist extends EventEmitter {
   }
 
   end () {
+    if (!this.current) {
+      return
+    }
+
     const entry = this.list[this.current.index]
 
     this.executeActionsOrPauses(entry, 'end', () => this.next())
@@ -354,7 +358,7 @@ class VideoPlaylist extends EventEmitter {
         window.setTimeout(() => {
           this.pauseStart = undefined
 
-          if (title) {
+          if (title && title.parentNode === this.dom) {
             this.dom.removeChild(title)
           }
 
@@ -367,6 +371,10 @@ class VideoPlaylist extends EventEmitter {
       },
       () => {
         if (time !== 'end') {
+          if(!this.current) {
+            return
+          }
+
           this.current.video.play()
         }
 
@@ -421,7 +429,7 @@ class VideoPlaylist extends EventEmitter {
 
     this.preload()
     this.start()
-    if (this.current.index) {
+    if (this.current && this.current.index) {
       this.play()
     }
   }
