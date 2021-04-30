@@ -266,7 +266,9 @@ class VideoPlaylist extends EventEmitter {
       return this.next()
     }
 
-    this.current.video.play()
+    if (this.pauseStart === undefined) {
+      this.current.video.play()
+    }
   }
 
   /**
