@@ -298,10 +298,10 @@ class VideoPlaylist extends EventEmitter {
     )
 
     if (time === currentPosition) {
-      this.executeActionsOrPauses(entry, time, () => this.update())
+      this.executeActionsOrPauses(entry, time)
     }
     else if (time !== global.Infinity) {
-      this.currentTimeout = window.setTimeout(() => this.executeActionsOrPauses(entry, time, () => this.update()), (time - currentPosition) * 1000)
+      this.currentTimeout = window.setTimeout(() => this.executeActionsOrPauses(entry, time), (time - currentPosition) * 1000)
     }
   }
 
@@ -312,7 +312,7 @@ class VideoPlaylist extends EventEmitter {
 
     const entry = this.list[this.current.index]
 
-    this.executeActionsOrPauses(entry, 'end', () => this.next())
+    this.executeActionsOrPauses(entry, 'end')
   }
 
   executeActionsOrPauses (entry, time, callback) {
@@ -337,53 +337,53 @@ class VideoPlaylist extends EventEmitter {
 
     if (pauses.length) {
       this.current.video.pause()
+
+      const pause = pauses.shift()
+
+      this._pauseStart(entry, pause, callback)
     } else {
-      return callback()
+      if (this.pauseStart) {
+        this.pauseIndex = undefined
+        this.pauseStart = undefined
+      }
+
+      if (time === 'end') {
+        this.next()
+      } else {
+        this.current.video.play()
+        this.update()
+      }
+    }
+  }
+
+  _pauseStart (entry, pause) {
+    this.pauseIndex = entry.pauses.indexOf(pause)
+    this.current.pauseIndex = this.pauseIndex + 1
+
+    this.pauseStart = new Date().getTime()
+
+    this.emit('pauseStart', entry, pause)
+
+    let title
+    if (pause.title) {
+      title = this.showTitle(pause.title)
     }
 
-    async.eachSeries(pauses,
-      (pause, done) => {
-        this.pauseIndex = entry.pauses.indexOf(pause)
-        this.current.pauseIndex = this.pauseIndex + 1
+    this.classesModify(pause.classAdd, pause.classRemove)
 
-        this.pauseStart = new Date().getTime()
+    window.setTimeout(() => this._pauseEnd(entry, pause, title), pause.duration * 1000)
+  }
 
-        this.emit('pauseStart', entry, pause)
+  _pauseEnd (entry, pause, title) {
+    this.emit('pauseEnd', entry, pause)
 
-        let title
-        if (pause.title) {
-          title = this.showTitle(pause.title)
-        }
+    if (title && title.parentNode === this.dom) {
+      this.dom.removeChild(title)
+    }
 
-        this.classesModify(pause.classAdd, pause.classRemove)
+    this.classesModify(pause.classRemove, pause.classAdd)
 
-        window.setTimeout(() => {
-          this.emit('pauseEnd', entry, pause)
-
-          this.pauseStart = undefined
-          this.pauseIndex = undefined
-
-          if (title && title.parentNode === this.dom) {
-            this.dom.removeChild(title)
-          }
-
-          this.classesModify(pause.classRemove, pause.classAdd)
-
-          done()
-        }, pause.duration * 1000)
-      },
-      () => {
-        if (time !== 'end') {
-          if(!this.current) {
-            return
-          }
-
-          this.current.video.play()
-        }
-
-        callback()
-      }
-    )
+    this.executeActionsOrPauses(entry, pause.time)
   }
 
   showTitle (title) {
