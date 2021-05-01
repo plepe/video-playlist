@@ -320,7 +320,7 @@ class VideoPlaylist extends EventEmitter {
   }
 
   executeActionsOrPauses (entry, time, callback) {
-    if (this.pauseStart) {
+    if (this.activePause) {
       // pause active, wait
       return
     }
@@ -349,9 +349,7 @@ class VideoPlaylist extends EventEmitter {
 
       this._pauseStart(entry, pause, callback)
     } else {
-      if (this.pauseStart) {
-        this.pauseStart = undefined
-      }
+      this.activePause && this.activePause.end()
 
       if (time === 'end') {
         this.next()
@@ -367,24 +365,37 @@ class VideoPlaylist extends EventEmitter {
 
     this.current.pauseIndex = entry.pauses.indexOf(pause) + 1
 
-    this.pauseStart = new Date().getTime() - (duration === null ? 0 : pause.duration - duration) * 1000
+    this.activePause = {
+      start: new Date().getTime() - (duration === null ? 0 : pause.duration - duration) * 1000,
+      entry,
+      pause
+    }
 
     this.emit('pauseStart', entry, pause)
 
     let title
     if (pause.title) {
       title = this.showTitle(pause.title)
+      this.activePause.title = title
     }
 
     this.classesModify(pause.classAdd, pause.classRemove)
 
-    this.pauseTimeout = window.setTimeout(
-      () => this._pauseEnd(entry, pause, title),
+    this.activePause.end = () => this._pauseEnd()
+
+    this.activePause.timeout = window.setTimeout(
+      () => this._pauseEnd(),
       (duration === null ? pause.duration : duration) * 1000
     )
   }
 
-  _pauseEnd (entry, pause, title) {
+  _pauseEnd () {
+    const entry = this.activePause.entry
+    const pause = this.activePause.pause
+    const title = this.activePause.title
+
+    window.clearTimeout(this.activePause.timeout)
+
     this.emit('pauseEnd', entry, pause)
 
     if (title && title.parentNode === this.dom) {
@@ -393,7 +404,7 @@ class VideoPlaylist extends EventEmitter {
 
     this.classesModify(pause.classRemove, pause.classAdd)
 
-    this.pauseStart = undefined
+    this.activePause = undefined
 
     this.executeActionsOrPauses(entry, pause.time)
   }
@@ -505,9 +516,9 @@ class VideoPlaylist extends EventEmitter {
 
     let result = this.current.video.currentTime
 
-    if (this.pauseStart !== undefined) {
+    if (this.activePause !== undefined) {
       const currentPause = pauses.pop()
-      result += (new Date().getTime() - this.pauseStart) / 1000
+      result += (new Date().getTime() - this.activePause.start) / 1000
     }
     
     result += pauses.reduce((total, pause) => total + parseFloat(pause.duration), 0)
@@ -529,9 +540,8 @@ class VideoPlaylist extends EventEmitter {
       return
     }
 
-    if (this.pauseTimeout) {
-      global.clearTimeout(this.pauseTimeout)
-      this.pauseTimeout = null
+    if (this.activePause) {
+      this._pauseEnd()
     }
 
     let pauses = []
@@ -557,7 +567,7 @@ class VideoPlaylist extends EventEmitter {
 
         this.current.video.currentTime = pause.time
       } else {
-        this.pauseStart = undefined
+        this.activePause && this.activePause.end()
         this.current.pauseIndex = entry.pauses.indexOf(pause) + 1
 
         this.current.video.currentTime = videoTime
