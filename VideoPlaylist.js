@@ -155,11 +155,19 @@ class VideoPlaylist extends EventEmitter {
         video: document.createElement('video')
       }
 
+      this.preloadList.push(entry)
+    }
+
+    this.preloadList.forEach((entry, i) => {
       entry.video.onended = () => this.end()
       entry.video.preload = 'auto'
       entry.video.controls = this.options.controls || false
       entry.video.onloadedmetadata = () => {
         if (!this.list.length) {
+          return
+        }
+
+        if (entry.index === null) {
           return
         }
 
@@ -190,9 +198,7 @@ class VideoPlaylist extends EventEmitter {
         this.emit('play', entry)
         this.update()
       }
-
-      this.preloadList.push(entry)
-    }
+    })
   }
 
   preload () {
