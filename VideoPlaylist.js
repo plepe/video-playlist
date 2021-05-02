@@ -301,7 +301,10 @@ class VideoPlaylist extends EventEmitter {
       nextPauses.length ? nextPauses[0].time : global.Infinity
     )
 
-    if (time === currentPosition) {
+    if (time === global.Infinity) {
+      this.current.video.play()
+    }
+    else if (time === currentPosition) {
       this.executeActionsOrPauses(entry, time)
     }
     else if (time !== global.Infinity) {
