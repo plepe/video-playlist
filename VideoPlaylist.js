@@ -192,7 +192,6 @@ class VideoPlaylist extends EventEmitter {
       }
       entry.video.onpause = () => {
         this.emit('pause', entry)
-        this.update()
       }
       entry.video.onplay = () => {
         this.emit('play', entry)
