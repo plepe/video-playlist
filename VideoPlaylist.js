@@ -390,6 +390,10 @@ class VideoPlaylist extends EventEmitter {
   }
 
   _pauseEnd () {
+    if (!this.activePause) {
+      return
+    }
+
     const entry = this.activePause.entry
     const pause = this.activePause.pause
     const title = this.activePause.title
