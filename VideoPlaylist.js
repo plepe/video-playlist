@@ -292,6 +292,10 @@ class VideoPlaylist extends EventEmitter {
 
     const currentPosition = this.current.video.currentTime
 
+    if ((!entry.actions || !entry.actions.length) && (!entry.pauses || !entry.pauses.length)) {
+      return this.current.video.play()
+    }
+
     // filter
     const nextActions = entry.actions ? entry.actions.filter((action, index) => action.time >= currentPosition && index >= this.current.actionIndex) : []
     const nextPauses = entry.pauses ? entry.pauses.filter((pause, index) => pause.time >= currentPosition && index >= this.current.pauseIndex) : []
@@ -301,10 +305,7 @@ class VideoPlaylist extends EventEmitter {
       nextPauses.length ? nextPauses[0].time : global.Infinity
     )
 
-    if (time === global.Infinity) {
-      this.current.video.play()
-    }
-    else if (time === currentPosition) {
+    if (time === currentPosition) {
       this.executeActionsOrPauses(entry, time)
     }
     else if (time !== global.Infinity) {
