@@ -325,6 +325,10 @@ class VideoPlaylist extends EventEmitter {
       return
     }
 
+    if (!this.current) {
+      return
+    }
+
     this.actionTime = time
     const actions = entry.actions ? entry.actions.filter((action, index) => action.time === time && index >= this.current.actionIndex) : []
     const pauses = entry.pauses ? entry.pauses.filter((pause, index) => pause.time === time && index >= this.current.pauseIndex) : []
