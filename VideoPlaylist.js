@@ -279,6 +279,11 @@ class VideoPlaylist extends EventEmitter {
    * re-calculate duration, endtime and next action/pause
    */
   update () {
+    if (this.activePause) {
+      // pause active, wait
+      return
+    }
+
     if (this.currentTimeout) {
       window.clearTimeout(this.currentTimeout)
       this.currentTimeout = null
@@ -291,10 +296,6 @@ class VideoPlaylist extends EventEmitter {
     const entry = this.list[this.current.index]
 
     const currentPosition = this.current.video.currentTime
-
-    if ((!entry.actions || !entry.actions.length) && (!entry.pauses || !entry.pauses.length)) {
-      return this.current.video.play()
-    }
 
     // filter
     const nextActions = entry.actions ? entry.actions.filter((action, index) => action.time >= currentPosition && index >= this.current.actionIndex) : []
@@ -310,6 +311,9 @@ class VideoPlaylist extends EventEmitter {
     }
     else if (time !== global.Infinity) {
       this.currentTimeout = window.setTimeout(() => this.executeActionsOrPauses(entry, time), (time - currentPosition) * 1000)
+    }
+    else {
+      this.current.video.play()
     }
   }
 
@@ -369,8 +373,6 @@ class VideoPlaylist extends EventEmitter {
   }
 
   _pauseStart (entry, pause, duration=null) {
-    this.current.video.pause()
-
     this.current.pauseIndex = entry.pauses.indexOf(pause) + 1
 
     this.activePause = {
@@ -378,6 +380,8 @@ class VideoPlaylist extends EventEmitter {
       entry,
       pause
     }
+
+    this.current.video.pause()
 
     this.emit('pauseStart', entry, pause)
 
