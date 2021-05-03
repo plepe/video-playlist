@@ -310,6 +310,7 @@ class VideoPlaylist extends EventEmitter {
     }
     else if (time !== global.Infinity) {
       this.currentTimeout = window.setTimeout(() => this.executeActionsOrPauses(entry, time), (time - currentPosition) * 1000)
+      this.current.video.play()
     }
     else {
       this.current.video.play()
